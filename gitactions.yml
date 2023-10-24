@@ -1,0 +1,36 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      run: docker build -t my-app:latest .
+
+    - name: Run Tests
+      run: docker run my-app:latest run-tests # Ajuste para o seu framework de testes
+
+  deploy_staging:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to Staging
+      run: ./deploy-to-staging.sh # Certifique-se que este script está no repositório e tem permissão de execução
+
+  deploy_production:
+    needs: deploy_staging
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to Production
+      run: ./deploy-to-production.sh # Certifique-se que este script está no repositório e tem permissão de execução
