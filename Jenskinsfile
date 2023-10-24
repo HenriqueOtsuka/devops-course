@@ -1,0 +1,40 @@
+pipeline {
+    agent any 
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Obtém o código-fonte mais recente do repositório Git
+                checkout scm
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                // Constrói a imagem Docker
+                sh 'docker build -t my-app:latest .'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                // Executa testes (ajuste isso para o seu framework de testes)
+                sh 'docker run my-app:latest run-tests'
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                // Faz o deploy para o ambiente de Staging
+                sh './deploy-to-staging.sh'
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                // Faz o deploy para o ambiente de Produção
+                sh './deploy-to-production.sh'
+            }
+        }
+    }
+}
